@@ -40,15 +40,13 @@ matrix:
     #
     - os: linux
       env:
-        - JOB="GCC 7 Release + Codecov and Coveralls"
+        - JOB="GCC 7 Release + Codecov"
         - CC_COMPILER=gcc-7
         - CXX_COMPILER=g++-7
         - BUILD_TYPE=Release
         - ENABLE_TESTING=TRUE
         - ENABLE_COVERAGE=TRUE
       addons: *gcc7
-      before_install:
-        - pip install --user cpp-coveralls
       script:
         - cd "${TRAVIS_BUILD_DIR}"
         - mkdir -p build && cd build
@@ -67,9 +65,12 @@ matrix:
       after_success:
         - ctest --extra-verbose --parallel 2
         - |
-          lcov --directory . --capture --output-file coverage.info # capture coverage info
-          lcov --remove coverage.info '/usr/*' --output-file coverage.info # filter out system
-          # Codecov - upload the report.
+          # Codecov
+          # Capture coverage info.
+          lcov --directory . --capture --output-file coverage.info
+          # Filter out system.
+          lcov --remove coverage.info '/usr/*' --output-file coverage.info
+          # Upload the report.
           bash <(curl -s https://codecov.io/bash)
 
 install:
