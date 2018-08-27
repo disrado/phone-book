@@ -1,3 +1,9 @@
+# Phone-book application
+
+master|dev
+:---:|:---:
+|[![Build Status](https://travis-ci.org/disrado/phone-book.svg?branch=master)](https://travis-ci.org/disrado/phone-book)|
+
 # Modules structure.
 
 ## app

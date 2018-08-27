@@ -8,6 +8,10 @@ include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 
 conan_basic_setup()
 
+if (ENABLE_COVERAGE)
+	include(Coverage)
+endif ()
+
 include(cotire)
 
 add_subdirectory(modules/libpb)

@@ -36,7 +36,7 @@ matrix:
         - cmake --build . --config ${BUILD_TYPE} -- -j2
 
     #
-    # GCC 7 Release + codecov + coveralls.
+    # GCC 7 Release + codecov.
     #
     - os: linux
       env:
@@ -53,7 +53,9 @@ matrix:
         - cd "${TRAVIS_BUILD_DIR}"
         - mkdir -p build && cd build
         - |
-          conan install .. --build \
+          conan install .. \
+            --build gtest \
+            --build missing \
             -s build_type=${BUILD_TYPE} \
             -s compiler.libcxx=libstdc++11
         - |
@@ -69,13 +71,6 @@ matrix:
           lcov --remove coverage.info '/usr/*' --output-file coverage.info # filter out system
           # Codecov - upload the report.
           bash <(curl -s https://codecov.io/bash)
-          # Coveralls - upload the report.
-          cd ..
-          coveralls --build-root build --gcov-options '\-lp' \
-            -e build/external \
-            -e build/catch \
-            -e cmake \
-            -E ".*CMakeFiles.*"
 
 install:
   # Set up the environment.
