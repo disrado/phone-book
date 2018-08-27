@@ -79,12 +79,11 @@ TEST(DbHandler, Acquire)
 	ASSERT_TRUE(connectionUnit != nullptr);
 }
 
-
 TEST(PhoneBookWorker, SelectRow)
 {
-	const pb::ContactId id{ std::to_string(rand()) };
+	const pb::ContactId id{ std::to_string(rand_r()) };
 	const auto contact{ details::CreateContact(
-		id, "name", "surname", "birthday", std::to_string(rand()) + "1", "address"
+		id, "name", "surname", "birthday", std::to_string(rand_r()) + "1", "address"
 	) };
 
 	auto connectionUnit{ pb::db::DbHandler::Instance().Acquire() };
@@ -105,9 +104,9 @@ TEST(PhoneBookWorker, SelectRow)
 
 TEST(PhoneBookWorker, InsertContact)
 {
-	const pb::ContactId id{ std::to_string(rand()) };
+	const pb::ContactId id{ std::to_string(rand_r()) };
 	const auto contact{ details::CreateContact(
-		id, "name", "surname", "birthday", std::to_string(rand() + rand()), "address"
+		id, "name", "surname", "birthday", std::to_string(rand_r() + rand_r()), "address"
 	) };
 
 	auto connectionUnit{ pb::db::DbHandler::Instance().Acquire() };
@@ -135,9 +134,9 @@ TEST(PhoneBookWorker, RemoveContact)
 	auto connectionUnit{ pb::db::DbHandler::Instance().Acquire() };
 	auto worker{ std::make_shared<pb::db::PhoneBookWorker>(connectionUnit) };
 
-	const pb::ContactId id{ std::to_string(rand() + rand()) };
+	const pb::ContactId id{ std::to_string(rand_r() + rand_r()) };
 	const auto contact{ details::CreateContact(
-		id, "name", "surname", "birthday", std::to_string(rand() + rand()), "address"
+		id, "name", "surname", "birthday", std::to_string(rand_r() + rand_r()), "address"
 	) };
 
 	worker->InsertContact(id, contact);
@@ -155,12 +154,12 @@ TEST(PhoneBookWorker, UpdateContact)
 	auto connectionUnit{ pb::db::DbHandler::Instance().Acquire() };
 	auto worker{ std::make_shared<pb::db::PhoneBookWorker>(connectionUnit) };
 
-	const pb::ContactId id{ std::to_string(rand() + rand()) };
+	const pb::ContactId id{ std::to_string(rand_r() + rand_r()) };
 	const auto contact{ details::CreateContact(
-		id, "name", "surname", "birthday", std::to_string(rand() + rand()) + "1", "address"
+		id, "name", "surname", "birthday", std::to_string(rand_r() + rand_r()) + "1", "address"
 	) };
 	const auto contact2{ details::CreateContact(
-		id, "name", "surname", "birthday", std::to_string(rand()), "address"
+		id, "name", "surname", "birthday", std::to_string(rand_r()), "address"
 	) };
 
 	worker->InsertContact(id, contact);
@@ -179,19 +178,19 @@ TEST(PhoneBookWorker, UpdateContact)
 
 TEST(PhoneBookWorker, SelectAll)
 {
-	const pb::ContactId id1{ std::to_string(rand()) };
+	const pb::ContactId id1{ std::to_string(rand_r()) };
 	const auto contact1{ details::CreateContact(
-		id1, "name", "surname", "birthday", std::to_string(rand()) + "1", "address"
+		id1, "name", "surname", "birthday", std::to_string(rand_r()) + "1", "address"
 	) };
 
-	const pb::ContactId id2{ std::to_string(rand()) };
+	const pb::ContactId id2{ std::to_string(rand_r()) };
 	const auto contact2{ details::CreateContact(
-		id2, "name", "surname", "birthday", std::to_string(rand()) + "1", "address"
+		id2, "name", "surname", "birthday", std::to_string(rand_r()) + "1", "address"
 	) };
 
-	const pb::ContactId id3{ std::to_string(rand()) };
+	const pb::ContactId id3{ std::to_string(rand_r()) };
 	const auto contact3{ details::CreateContact(
-		id3, "name", "surname", "birthday", std::to_string(rand()) + "1", "address"
+		id3, "name", "surname", "birthday", std::to_string(rand_r()) + "1", "address"
 	) };
 
 	auto connectionUnit{ pb::db::DbHandler::Instance().Acquire() };
@@ -209,7 +208,7 @@ TEST(PhoneBookWorker, SelectAll)
 TEST(PhoneBook, AddContact)
 {
 	const auto contact{ std::make_shared<pb::Contact>(
-		"name", "surname", "birthday", std::to_string(rand()) + "1", "address"
+		"name", "surname", "birthday", std::to_string(rand_r()) + "1", "address"
 	) };
 
 	auto phobeBook = std::make_shared<pb::PhoneBook>();
@@ -239,7 +238,7 @@ TEST(PhoneBook, AddContact)
 TEST(PhoneBook, RemoveContact)
 {
 	const auto contact{ std::make_shared<pb::Contact>(
-		"name", "surname", "birthday", std::to_string(rand()) + "2", "address"
+		"name", "surname", "birthday", std::to_string(rand_r()) + "2", "address"
 	) };
 
 	auto phobeBook = std::make_shared<pb::PhoneBook>();
@@ -260,11 +259,11 @@ TEST(PhoneBook, UpdateContact)
 	srand((unsigned int)time(NULL));
 
 	const auto contact{ std::make_shared<pb::Contact>(
-		"name", "surname", "birthday", std::to_string(rand()) + "1", "address"
+		"name", "surname", "birthday", std::to_string(rand_r()) + "1", "address"
 	) };
 	
 	const auto contact2{ std::make_shared<pb::Contact>(
-		"name", "surname", "birthday", std::to_string(rand()), "address"
+		"name", "surname", "birthday", std::to_string(rand_r()), "address"
 	) };
 
 	auto phobeBook = std::make_shared<pb::PhoneBook>();
@@ -289,10 +288,10 @@ TEST(PhoneBook, GetContactsInfo)
 	auto phobeBook = std::make_shared<pb::PhoneBook>();
 
 	const auto contact{ std::make_shared<pb::Contact>(
-		"namsdfe", "susdafrname", "birasfthday", std::to_string(rand()) + "1", "aas"
+		"namsdfe", "susdafrname", "birasfthday", std::to_string(rand_r()) + "1", "aas"
 	) };
 	const auto contact2{ std::make_shared<pb::Contact>(
-		"nadsfme", "surnasdafme", "birthdaasfy", std::to_string(rand()) + "38", "add"
+		"nadsfme", "surnasdafme", "birthdaasfy", std::to_string(rand_r()) + "38", "add"
 	) };
 
 	const auto id{ (phobeBook->AddContact(contact)).first };
@@ -308,7 +307,7 @@ TEST(PhoneBook, GetContactsInfo)
 TEST(PhoneBook, GetEntryById)
 {
 	const auto contact{ std::make_shared<pb::Contact>(
-		"ContactName", "surname", "birthday", std::to_string(rand()) + "8", "address"
+		"ContactName", "surname", "birthday", std::to_string(rand_r()) + "8", "address"
 	) };
 
 	auto phobeBook = std::make_shared<pb::PhoneBook>();

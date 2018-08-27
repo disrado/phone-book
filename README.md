@@ -3,6 +3,7 @@
 master|dev
 :---:|:---:
 |[![Build Status](https://travis-ci.org/disrado/phone-book.svg?branch=master)](https://travis-ci.org/disrado/phone-book)|
+|[![CodeFactor](https://www.codefactor.io/repository/github/disrado/phone-book/badge)](https://www.codefactor.io/repository/github/disrado/phone-book)|[![CodeFactor](https://www.codefactor.io/repository/github/disrado/phone-book/badge/feature/readme-improving)](https://www.codefactor.io/repository/github/disrado/phone-book/overview/feature/readme-improving)
 
 # Modules structure.
 
