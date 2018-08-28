@@ -31,7 +31,11 @@ matrix:
         - mkdir -p build && cd build
         - |
           conan install .. \
-            --build \
+            --build gtest \
+            --build boost \
+            --build fmt \
+            --build sqlite3 \
+            --build missing \
             -s build_type=${BUILD_TYPE} \
         - cmake .. -DCMAKE_BUILD_TYPE:STRING=${BUILD_TYPE}
         - cmake --build . --config ${BUILD_TYPE} -- -j2
@@ -54,7 +58,11 @@ matrix:
         - conan remote add conan https://api.bintray.com/conan/bincrafters/public-conan
         - |
           conan install .. \
-            --build \
+            --build gtest \
+            --build boost \
+            --build fmt \
+            --build sqlite3 \
+            --build missing \
             -s build_type=${BUILD_TYPE} \
             -s compiler.libcxx=libstdc++11
         - |
