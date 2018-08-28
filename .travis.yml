@@ -50,6 +50,7 @@ matrix:
       script:
         - cd "${TRAVIS_BUILD_DIR}"
         - mkdir -p build && cd build
+        - conan remote add conan https://api.bintray.com/conan/bincrafters/public-conan
         - |
           conan install .. \
             --build gtest \
@@ -73,6 +74,10 @@ matrix:
           # Upload the report.
           bash <(curl -s https://codecov.io/bash)
 
+before_install:
+  - sudo add-apt-repository --yes ppa:beineri/opt-qt591-trusty
+  - sudo apt-get update -qq
+
 install:
   # Set up the environment.
   - |
@@ -82,7 +87,10 @@ install:
     fi
   # Set the ${CXX} variable properly.
   - export CXX=${CXX_COMPILER}
-
+  - export Qt5_DIR=/opt/Qt/5.9.1/
+  - export PATH=$PATH:/data/myscripts
+  - sudo apt-get -y install qt59[QTPACKAGE]
+  - sudo apt-get install qtbase5-dev
   # Dependencies required by the CI are installed in ${TRAVIS_BUILD_DIR}/deps/.
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
   - mkdir -p "${DEPS_DIR}" && cd "${DEPS_DIR}"
@@ -96,3 +104,8 @@ install:
       export PATH=${DEPS_DIR}/cmake/bin:${PATH}
       sudo pip install conan
     fi
+
+script:
+  - source /opt/qt59/bin/qt59-env.sh
+  - /opt/qt59/bin/qmake
+  - make
