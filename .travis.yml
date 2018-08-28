@@ -35,6 +35,7 @@ matrix:
             --build boost \
             --build fmt \
             --build sqlite3 \
+            --build OpenSSL \
             --build missing \
             -s build_type=${BUILD_TYPE} \
         - cmake .. -DCMAKE_BUILD_TYPE:STRING=${BUILD_TYPE}
@@ -62,6 +63,7 @@ matrix:
             --build boost \
             --build fmt \
             --build sqlite3 \
+            --build OpenSSL \
             --build missing \
             -s build_type=${BUILD_TYPE} \
             -s compiler.libcxx=libstdc++11
