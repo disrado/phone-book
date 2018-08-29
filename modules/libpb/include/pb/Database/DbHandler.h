@@ -25,6 +25,7 @@ enum class ConnectionState
 //
 using SqliteShPtr = std::shared_ptr<sqlite3>;
 using Connection = std::pair<SqliteShPtr, ConnectionState>;
+using ConnectionShPtr = std::shared_ptr<Connection>;
 namespace fs = boost::filesystem;
 
 class ConnectionUnit
@@ -34,7 +35,7 @@ class ConnectionUnit
 	//
 public:
 	//! Constructor.
-	ConnectionUnit(Connection& connection);
+	ConnectionUnit(ConnectionShPtr connection);
 	//! Destructor.
 	~ConnectionUnit();
 	//! Copy constructor.
@@ -58,7 +59,7 @@ public:
 	//
 private:
 	//! Shared pointer to db connection.
-	Connection connection_;
+	ConnectionShPtr connection_;
 };
 
 class DbHandler final
@@ -68,7 +69,7 @@ class DbHandler final
 	//
 public:
 	using ConnectionDeleter = std::function<void(sqlite3*)>;
-	using ConnectionPool = std::unordered_map<SqliteShPtr, ConnectionState>;
+	using ConnectionPool = std::vector<ConnectionShPtr>;
 	using ConnectionUnitShPtr = std::shared_ptr<ConnectionUnit>;
 
 	//
@@ -94,9 +95,9 @@ private:
 	//
 private:
 	//! Returns free connection.
-	Connection GetFreeConnection();
+	ConnectionShPtr GetFreeConnection();
 	//! Creates a new connection.
-	Connection CreateConnection();
+	ConnectionShPtr CreateConnection();
 
 	//
 	// Private data members.

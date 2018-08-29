@@ -79,7 +79,6 @@ TEST(DbHandler, Acquire)
 	ASSERT_TRUE(connectionUnit != nullptr);
 }
 
-
 TEST(PhoneBookWorker, SelectRow)
 {
 	const pb::ContactId id{ std::to_string(rand()) };

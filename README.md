@@ -1,3 +1,11 @@
+# Phone-book application
+
+master|dev
+:---:|:---:
+|[![Build Status](https://travis-ci.org/disrado/phone-book.svg?branch=master)](https://travis-ci.org/disrado/phone-book)|[![Build Status](https://travis-ci.org/disrado/phone-book.svg?branch=dev)](https://travis-ci.org/disrado/phone-book)
+|[![CodeFactor](https://www.codefactor.io/repository/github/disrado/phone-book/badge)](https://www.codefactor.io/repository/github/disrado/phone-book)|[![CodeFactor](https://www.codefactor.io/repository/github/disrado/phone-book/badge)](https://www.codefactor.io/repository/github/disrado/phone-book)
+|[![codecov](https://codecov.io/gh/disrado/phone-book/branch/master/graph/badge.svg)](https://codecov.io/gh/disrado/phone-book)|[![codecov](https://codecov.io/gh/disrado/phone-book/branch/dev/graph/badge.svg)](https://codecov.io/gh/disrado/phone-book)
+
 # Modules structure.
 
 ## app

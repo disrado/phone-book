@@ -23,7 +23,6 @@ pushd %BUILD_DIR%
 
 echo [Conan] Downloading packages...
 conan install ^
-	--build gtest ^
 	--build missing ^
 	-s os="Windows" ^
 	-s build_type=%BUILD_CONFIGURATION% ^

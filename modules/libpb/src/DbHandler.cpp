@@ -12,20 +12,20 @@ namespace pb
 namespace db
 {
 
-ConnectionUnit::ConnectionUnit(Connection& connection)
+ConnectionUnit::ConnectionUnit(ConnectionShPtr connection)
 	: connection_{ connection }
 {
-	connection_.second = ConnectionState::Busy;
+	connection_->second = ConnectionState::Busy;
 }
 
 ConnectionUnit::~ConnectionUnit()
 {
-	connection_.second = ConnectionState::Free;
+	connection_->second = ConnectionState::Free;
 }
 
 sqlite3* ConnectionUnit::Get() const
 {
-	return connection_.first.get();
+	return connection_->first.get();
 }
 
 DbHandler::DbHandler()
@@ -62,18 +62,18 @@ void DbHandler::Init(const fs::path& path, size_t poolSize)
 	}
 }
 
-Connection DbHandler::GetFreeConnection()
+ConnectionShPtr DbHandler::GetFreeConnection()
 {
-	for (const auto& connection : pool_)
+	for (auto& connection : pool_)
 	{
-		if (connection.second == ConnectionState::Free) {
+		if (connection->second == ConnectionState::Free) {
 			return connection;
 		}
 	}
 	return CreateConnection();
 }
 
-Connection DbHandler::CreateConnection()
+ConnectionShPtr DbHandler::CreateConnection()
 {
 	sqlite3* newConnection;
 	const int openDbResult{ sqlite3_open(dbPath_.string().c_str(), &newConnection) };
@@ -82,14 +82,12 @@ Connection DbHandler::CreateConnection()
 		THROW_LOGIC_ERROR(fmt::format("Cannot open db {}", dbPath_.string()));
 	}
 
-	const auto connectionPtr = std::shared_ptr<sqlite3>(newConnection, connectionDeleter_);
-	const auto result{ pool_.insert(std::make_pair(connectionPtr, ConnectionState::Free)) };
+	//! Cannot use make_shared<sqlite> because you will get error 'use of undefined type 'sqlite3'.
+	const SqliteShPtr connectionPtr{ std::shared_ptr<sqlite3>(newConnection, connectionDeleter_) };
+	const auto connectoinPair{ std::make_shared<Connection>(connectionPtr, ConnectionState::Free) };
+	pool_.push_back(connectoinPair);
 
-	if (!result.second) {
-		THROW_LOGIC_ERROR("Cannot create db connection");
-	}
-
-	return *(result.first);
+	return connectoinPair;
 }
 
 DbHandler::ConnectionUnitShPtr DbHandler::Acquire()
