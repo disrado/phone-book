@@ -36,6 +36,7 @@ matrix:
             --build fmt \
             --build sqlite3 \
             --build OpenSSL \
+            --build zlib \
             --build missing \
             -s build_type=${BUILD_TYPE} \
         - cmake .. -DCMAKE_BUILD_TYPE:STRING=${BUILD_TYPE}
@@ -56,19 +57,21 @@ matrix:
       script:
         - cd "${TRAVIS_BUILD_DIR}"
         - mkdir -p build && cd build
+        - mkdir gcc7-x64-${BUILD_TYPE} && cd gcc7-x64-${BUILD_TYPE}
         - conan remote add conan https://api.bintray.com/conan/bincrafters/public-conan
         - |
-          conan install .. \
+          conan install ../.. \
             --build gtest \
             --build boost \
             --build fmt \
             --build sqlite3 \
             --build OpenSSL \
+            --build zlib \
             --build missing \
             -s build_type=${BUILD_TYPE} \
             -s compiler.libcxx=libstdc++11
         - |
-          cmake .. \
+          cmake ../.. \
             -DCMAKE_BUILD_TYPE:STRING=${BUILD_MODE} \
             -DENABLE_TESTING:BOOL=${ENABLE_TESTING} \
             -DENABLE_COVERAGE:BOOL=${ENABLE_COVERAGE}
@@ -86,6 +89,7 @@ matrix:
 
 before_install:
   - sudo add-apt-repository --yes ppa:beineri/opt-qt591-trusty
+  - sudo add-apt-repository --yes ppa:jonathonf/python-3.6
   - sudo apt-get update -qq
 
 install:
@@ -97,8 +101,13 @@ install:
     fi
   # Set the ${CXX} variable properly.
   - export CXX=${CXX_COMPILER}
-  - export Qt5_DIR=/opt/Qt/5.9.1/
   - export PATH=$PATH:/data/myscripts
+  - sudo apt-get -y install python3.6
+  - sudo apt-get install python3.6-dev
+  - sudo wget https://bootstrap.pypa.io/get-pip.py
+  - sudo python3.6 get-pip.py
+  - sudo python3.6 -m pip install --upgrade pip
+  - sudo pip install urllib3[secure]
   - sudo apt-get -y install qt59[QTPACKAGE]
   - sudo apt-get install qtbase5-dev
   # Dependencies required by the CI are installed in ${TRAVIS_BUILD_DIR}/deps/.
@@ -114,8 +123,3 @@ install:
       export PATH=${DEPS_DIR}/cmake/bin:${PATH}
       sudo pip install conan
     fi
-
-script:
-  - source /opt/qt59/bin/qt59-env.sh
-  - /opt/qt59/bin/qmake
-  - make
