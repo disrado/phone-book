@@ -28,6 +28,9 @@ QVBoxLayout* ContactInfoWidget::InitEntryFields()
 	NameLineEdit_ = new EntryField{ tr("Name"), this };
 	SurnameLineEdit_ = new EntryField{ tr("Surname"), this };
 	BirthdayLineEdit_ = new EntryField{ tr("Birthday"), this };
+	//! Mb move to class?
+	BirthdayLineEdit_->setInputMask("00-00-0000;_");
+	
 	PhoneNumberLineEdit_ = new EntryField{ tr("Phone number"), this };
 	AddressLineEdit_ = new EntryField{ tr("Address"), this };
 
@@ -64,10 +67,9 @@ QHBoxLayout* ContactInfoWidget::InitButtons()
 
 void ContactInfoWidget::AddButtonOnClick()
 {
-	this->CheckEntryFields();
-
 	try
 	{
+		this->CheckEntryFields();
 		const auto entry{ phoneBook_->AddContact(this->ContactFromFields()) };
 		currentContactId_ = entry.first;
 		emit AddButtonPressed(entry);
@@ -99,10 +101,9 @@ void ContactInfoWidget::RemoveButtonOnClick()
 
 void ContactInfoWidget::UpdateButtonOnClick()
 {
-	this->CheckEntryFields();
-
 	try
 	{
+		this->CheckEntryFields();
 		const auto entry{ phoneBook_->UpdateContact(currentContactId_, this->ContactFromFields()) };
 		currentContactId_ = entry.first;
 		emit UpdateButtonPressed(entry);
@@ -150,14 +151,14 @@ bool ContactInfoWidget::AllFieldsFilled()
 void ContactInfoWidget::CheckEntryFields()
 {
 	if (!this->AllFieldsFilled()) {
-		this->ShowCriticalMessageBox(tr("Please fill all fields."));
+		throw std::logic_error("Please fill all fields.");
 	}
 }
 
 void ContactInfoWidget::ShowCriticalMessageBox(const QString& message)
 {
 	QMessageBox error;
-	error.setText(message);
+	error.setText(tr(message.toStdString().c_str()));
 	error.setIcon(QMessageBox::Critical);
 	error.exec();
 }

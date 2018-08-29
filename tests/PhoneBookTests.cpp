@@ -7,14 +7,11 @@
 
 #include <fmt/format.h>
 
-#include <boost/exception/all.hpp>
 #include <boost/filesystem.hpp>
 
 #include <cstdio>
 #include <ctime>
 #include <memory>
-
-#define THROW_LOGIC_ERROR(arg) BOOST_THROW_EXCEPTION(std::logic_error{ arg })
 
 namespace details
 {
@@ -116,7 +113,7 @@ TEST(DbHandler, Acquire)
 	auto connectionUnits{ std::vector<decltype(connectionUnit)>{} };
 
 	//! Getting more connections than default pool size.
-	size_t conUnitCount{1000};
+	size_t conUnitCount{ 1000 };
 	while (conUnitCount--) {
 		connectionUnits.push_back(pb::db::DbHandler::Instance().Acquire());
 	};
