@@ -14,16 +14,18 @@ Executable module which contains gui application based on Qt framework.
 ## libpb
 Library module which contains logic for working with database.
 
-# How to build this project?
+# Windows
+
+## How to build this project?
 1. Add Qt5_DIR variable to system variables list which will be contains path to qt.
 For example: Qt5_DIR "C:\Qt\5.11.1\msvc2017_64"
 2. Go to the "sripts" directory and run script what you need
 
-# Run executable
+## Run executable
 1. For running executable you need add path to qt dynamic libraries to your PATH variable
 For example: PATH "C:\Qt\5.11.1\msvc2017_64\bin"
 
-# Tests
+## Tests
 
 Before running this tests you should create "pbTests.db" database in tests/TestDatabase
 and execute content of scripts/db.sql for this database.
