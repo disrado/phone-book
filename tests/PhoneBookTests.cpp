@@ -5,12 +5,16 @@
 
 #include <gtest/gtest.h>
 
+#include <fmt/format.h>
+
 #include <boost/exception/all.hpp>
 #include <boost/filesystem.hpp>
 
 #include <cstdio>
 #include <ctime>
 #include <memory>
+
+#define THROW_LOGIC_ERROR(arg) BOOST_THROW_EXCEPTION(std::logic_error{ arg })
 
 namespace details
 {
@@ -56,18 +60,49 @@ void ClearDb()
 	}
 }
 
+void CreateTable()
+{
+	const std::string query{ fmt::format(std::string("CREATE TABLE IF NOT EXISTS entries (") +
+		"id TEXT NOT NULL UNIQUE," +
+		"name TEXT NOT NULL," +
+		"surname TEXT NOT NULL," +
+		"birthday TEXT NOT NULL," +
+		"phone_number TEXT NOT NULL UNIQUE," +
+		"address TEXT NOT NULL"
+	")") };
+	
+	auto connectionUnit{ pb::db::DbHandler::Instance().Acquire() };
+	const auto result{ sqlite3_exec(connectionUnit->Get(), query.c_str(), NULL, 0, NULL) };
+}
+
+void DropTable()
+{
+	const std::string query{ fmt::format("DROP TABLE IF EXISTS entries") };
+	
+	auto connectionUnit{ pb::db::DbHandler::Instance().Acquire() };
+	const auto result{ sqlite3_exec(connectionUnit->Get(), query.c_str(), NULL, 0, NULL) };
+}
+
 }	// namespace details
 
 TEST(Init, init)
 {
+	//! Checks throwing exception if db filename doesnt match "somename.db".
 	ASSERT_THROW(
 		pb::db::DbHandler::Instance().Init("InvalidDbName", 4),
+		std::logic_error
+	);
+
+	//! Checks throwing exception if sqlite3_open takes incorrect parameter.
+	ASSERT_THROW(
+		pb::db::DbHandler::Instance().Init("data.db?mode=readonly.db", 4),
 		std::logic_error
 	);
 
 	const std::string dbName{ details::DEFAULT_PATH + "pbTest.db" };
 
 	pb::db::DbHandler::Instance().Init(dbName, 4);
+	details::CreateTable();
 
 	srand((unsigned int)time(0));
 }
@@ -77,6 +112,14 @@ TEST(DbHandler, Acquire)
 	auto connectionUnit{ pb::db::DbHandler::Instance().Acquire() };
 
 	ASSERT_TRUE(connectionUnit != nullptr);
+
+	auto connectionUnits{ std::vector<decltype(connectionUnit)>{} };
+
+	//! Getting more connections than default pool size.
+	size_t conUnitCount{1000};
+	while (conUnitCount--) {
+		connectionUnits.push_back(pb::db::DbHandler::Instance().Acquire());
+	};
 }
 
 TEST(PhoneBookWorker, SelectRow)
@@ -100,6 +143,10 @@ TEST(PhoneBookWorker, SelectRow)
 	ASSERT_EQ(contact->birthday, row[3]);
 	ASSERT_EQ(contact->phoneNumber, row[4]);
 	ASSERT_EQ(contact->address, row[5]);
+
+	details::DropTable();
+	ASSERT_THROW(worker->SelectRow(id), std::logic_error);
+	details::CreateTable();
 }
 
 TEST(PhoneBookWorker, InsertContact)
@@ -203,6 +250,10 @@ TEST(PhoneBookWorker, SelectAll)
 	const auto rows{ worker->SelectAll() };
 
 	ASSERT_TRUE(rows.size() != 0);
+
+	details::DropTable();
+	ASSERT_THROW(worker->SelectAll(), std::logic_error);
+	details::CreateTable();
 }
 
 TEST(PhoneBook, AddContact)
@@ -329,6 +380,8 @@ TEST(PhoneBook, GetEntryById)
 	ASSERT_EQ(contact->birthday, row[3]);
 	ASSERT_EQ(contact->phoneNumber, row[4]);
 	ASSERT_EQ(contact->address, row[5]);
+
+	ASSERT_THROW(phobeBook->GetEntryById("RandomContactID"), std::logic_error);
 }
 
 TEST(ClearDb, clearDb)
